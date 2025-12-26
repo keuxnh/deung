@@ -2,210 +2,300 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     
-    <title>내신 석차 등급 계산기</title>
-    <meta name="description" content="나의 등수와 전체 인원을 입력하면 내신 등급을 정확하게 계산해줍니다. 1등급부터 9등급까지 등수 커트라인과 비율을 한눈에 확인하세요.">
-    <meta name="keywords" content="내신등급계산기, 석차등급, 고교내신, 등급컷, 등수계산, 9등급제">
-    <meta name="author" content="내신계산기">
-    
-    <meta property="og:title" content="내신 석차 등급 계산기">
-    <meta property="og:description" content="내 등수 입력하고 바로 등급 확인! 등급별 커트라인 표">
+    <title>내신 등급 계산기</title>
+    <meta name="description" content="나의 등수와 전체 인원을 입력하면 내신 등급을 정확하게 계산해줍니다. 1등급부터 9등급까지 등급컷과 비율을 한눈에 확인하세요.">
+    <meta name="keywords" content="내신등급계산기, 석차등급, 고교내신, 등급컷, 수행평가, 중간고사, 기말고사, 성적산출">
     <meta property="og:type" content="website">
+    <meta property="og:title" content="고교 내신 등급 계산기">
+    <meta property="og:description" content="내 등수 입력하고 바로 등급 확인! 등급별 커트라인 확인하기">
 
     <style>
+        :root {
+            --primary-color: #FF453A; /* 포인트 컬러 (애플 레드) */
+            --bg-gradient: linear-gradient(180deg, #F2F2F7 0%, #E5E5EA 100%); /* 배경 그라데이션 */
+            --card-bg: #FFFFFF;
+            --text-main: #1C1C1E;
+            --text-sub: #8E8E93;
+            --border-color: #E5E5EA;
+            --input-bg: #F2F2F7;
+            --shadow-soft: 0 8px 30px rgba(0, 0, 0, 0.04);
+        }
+
+        /* [핵심 수정] html과 body 전체에 배경을 고정하여 빈 공간(흰색) 제거 */
+        html {
+            height: 100%;
+            background: var(--bg-gradient);
+            background-attachment: fixed; /* 배경이 스크롤 따라 움직이지 않고 고정됨 */
+            overflow-x: hidden;
+        }
+
         body {
-            font-family: 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
-            background-color: #f0f2f5;
+            font-family: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Pretendard", sans-serif;
             margin: 0;
             padding: 20px;
             display: flex;
-            flex-direction: column; /* 세로 정렬로 변경 (광고 때문) */
+            flex-direction: column;
             align-items: center;
-            min-height: 100vh;
+            justify-content: center; /* 화면 중앙 정렬 */
+            min-height: 100vh; /* 최소 높이 확보 */
+            box-sizing: border-box;
+            color: var(--text-main);
+            -webkit-tap-highlight-color: transparent;
         }
+
         .main-wrapper {
             display: flex;
             gap: 20px;
             flex-wrap: wrap;
             justify-content: center;
-            max-width: 900px;
+            max-width: 800px;
             width: 100%;
-            margin-bottom: 30px; /* 광고와의 간격 */
+            margin-bottom: 20px;
+            z-index: 1; /* 배경보다 위에 위치 */
         }
+
+        /* 카드 UI 스타일 */
         .box {
-            background-color: white;
-            padding: 2rem;
-            border-radius: 15px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            background-color: var(--card-bg);
+            padding: 30px;
+            border-radius: 24px;
+            box-shadow: var(--shadow-soft);
+            display: flex;
+            flex-direction: column;
+            border: 1px solid rgba(255, 255, 255, 0.5);
         }
+
         .calculator-section {
             flex: 1;
             min-width: 300px;
-            text-align: center;
         }
+
         .table-section {
             flex: 1;
             min-width: 300px;
         }
-        h1 { /* h2 -> h1 변경 (SEO 중요도 상향) */
-            color: #333;
-            margin-bottom: 20px;
-            text-align: center;
-            font-size: 1.5rem;
-        }
-        h3 {
-            color: #333;
-            margin-bottom: 20px;
-            text-align: center;
-        }
-        .input-group {
-            margin-bottom: 15px;
-            text-align: left;
-        }
-        label {
-            display: block;
-            margin-bottom: 5px;
-            font-weight: bold;
-            color: #555;
-        }
-        input {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            box-sizing: border-box;
-        }
-        button {
-            width: 100%;
-            padding: 12px;
-            background-color: #007bff;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            font-size: 16px;
-            cursor: pointer;
-            margin-top: 10px;
-            transition: background 0.3s;
-        }
-        button:hover {
-            background-color: #0056b3;
-        }
-        #result {
-            margin-top: 20px;
-            padding: 15px;
-            background-color: #e9ecef;
-            border-radius: 8px;
-            display: none;
-        }
-        .grade-result {
-            font-size: 24px;
-            font-weight: bold;
-            color: #007bff;
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 14px;
-        }
-        th, td {
-            padding: 10px;
-            border-bottom: 1px solid #eee;
-            text-align: center;
-        }
-        th {
-            background-color: #f8f9fa;
-            color: #555;
-            font-weight: bold;
-        }
-        tr:hover {
-            background-color: #f1f3f5;
-        }
-        .highlight-row {
-            background-color: #dbeaff !important;
-            font-weight: bold;
+
+        h2 {
+            margin: 0 0 20px 0;
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--text-main);
+            letter-spacing: -0.5px;
         }
 
-        /* 2. 광고 영역 스타일 */
+        .input-group {
+            margin-bottom: 16px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--text-sub);
+            font-size: 13px;
+        }
+
+        input {
+            width: 100%;
+            height: 50px;
+            padding: 0 16px;
+            border: none;
+            background-color: var(--input-bg);
+            border-radius: 12px;
+            box-sizing: border-box;
+            font-size: 17px;
+            color: var(--text-main);
+            transition: all 0.2s ease;
+        }
+        input:focus {
+            outline: none;
+            background-color: #EBEBF0;
+            box-shadow: 0 0 0 2px rgba(255, 69, 58, 0.1);
+        }
+
+        button {
+            width: 100%;
+            height: 54px;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 14px;
+            font-size: 17px;
+            font-weight: 700;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: transform 0.1s, opacity 0.2s;
+            box-shadow: 0 4px 12px rgba(255, 69, 58, 0.25);
+        }
+        button:active {
+            transform: scale(0.98);
+        }
+        button:hover {
+            opacity: 0.92;
+        }
+
+        #result-box {
+            margin-top: 20px;
+            padding: 20px;
+            background-color: #FFF2F1;
+            border-radius: 16px;
+            text-align: center;
+            display: none;
+        }
+
+        .grade-display {
+            font-size: 32px;
+            font-weight: 800;
+            color: var(--primary-color);
+            margin: 5px 0 0 0;
+            line-height: 1.2;
+        }
+        
+        .percent-display {
+            font-size: 14px;
+            color: var(--text-sub);
+            margin: 0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            font-size: 14px;
+        }
+
+        th {
+            background-color: #FAFAFA;
+            color: var(--text-sub);
+            font-weight: 600;
+            padding: 12px;
+            border-bottom: 1px solid var(--border-color);
+            text-align: center;
+            font-size: 13px;
+        }
+
+        td {
+            padding: 12px;
+            border-bottom: 1px solid var(--border-color);
+            text-align: center;
+            color: var(--text-main);
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        .highlight-row {
+            background-color: #FFF2F1 !important;
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+        
+        .grade-badge {
+            display: inline-block;
+            width: 24px;
+            height: 24px;
+            line-height: 24px;
+            background-color: #F2F2F7;
+            border-radius: 50%;
+            font-size: 12px;
+            font-weight: 700;
+            color: #8E8E93;
+        }
+        .highlight-row .grade-badge {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        /* [광고 영역 스타일] */
         .ad-container {
             width: 100%;
-            max-width: 728px;
-            height: 90px; /* 광고 크기에 따라 조절 */
-            background-color: #e0e0e0; /* 광고 로딩 전 배경색 */
+            max-width: 800px;
+            /* 광고가 없을 땐 영역을 잡아주고, 광고가 로딩되면 자동으로 채워짐 */
+            min-height: 100px; 
+            background-color: rgba(255,255,255,0.4);
+            border: 1px dashed #D1D1D6;
+            border-radius: 16px;
             display: flex;
             justify-content: center;
             align-items: center;
-            color: #888;
-            margin-top: 20px;
-            border-radius: 8px;
+            color: #AEAEB2;
+            font-size: 13px;
+            margin-top: 10px;
         }
     </style>
-
-    </head>
+</head>
 <body>
 
 <div class="main-wrapper">
     <div class="box calculator-section">
-        <h1>내신 등급 계산기</h1>
+        <h2>내신 등급 계산기</h2>
         
         <div class="input-group">
-            <label for="rank">나의 등수 (등)</label>
-            <input type="number" id="rank" placeholder="예: 92">
+            <label for="rank">나의 등수</label>
+            <input type="number" id="rank" placeholder="등수를 입력하세요 (예: 15)" inputmode="numeric">
         </div>
 
         <div class="input-group">
-            <label for="total">전체 인원 (명)</label>
-            <input type="number" id="total" placeholder="예: 153">
+            <label for="total">전체 인원</label>
+            <input type="number" id="total" placeholder="전체 인원을 입력하세요 (예: 200)" inputmode="numeric">
         </div>
 
-        <button onclick="calculateAll()">계산하기</button>
+        <button onclick="calculateAll()">등급 확인하기</button>
 
-        <div id="result">
-            <p>단순 백분위: <span id="percent">0</span>%</p>
-            <p class="grade-result"><span id="myGrade">1</span>등급</p>
+        <div id="result-box">
+            <p class="percent-display">상위 <span id="percent-val">0</span>%</p>
+            <p class="grade-display"><span id="grade-val">1</span>등급</p>
         </div>
     </div>
 
     <div class="box table-section">
-        <h3>등급별 인원 컷</h3>
+        <h2 id="table-title">등급별 기준 비율</h2>
         <table>
             <thead>
-                <tr>
+                <tr id="table-header">
                     <th>등급</th>
-                    <th>누적 인원</th>
-                    <th>해당 등수</th>
+                    <th>비율</th>
+                    <th>누적 비율</th>
                 </tr>
             </thead>
             <tbody id="gradeTableBody">
-                <tr>
-                    <td colspan="3">전체 인원을 입력하고<br>계산 버튼을 눌러주세요.</td>
-                </tr>
             </tbody>
         </table>
     </div>
 </div>
 
 <div class="ad-container">
-    <p>광고 영역</p>
+    <span style="padding: 20px;">광고 영역</span>
 </div>
 
 <script>
-    const GRADE_CUTS = [
-        { grade: 1, percent: 4 },
-        { grade: 2, percent: 11 },
-        { grade: 3, percent: 23 },
-        { grade: 4, percent: 40 },
-        { grade: 5, percent: 60 },
-        { grade: 6, percent: 77 },
-        { grade: 7, percent: 89 },
-        { grade: 8, percent: 96 },
-        { grade: 9, percent: 100 }
+    const GRADE_STANDARDS = [
+        { grade: 1, percent: 4 }, { grade: 2, percent: 11 }, { grade: 3, percent: 23 },
+        { grade: 4, percent: 40 }, { grade: 5, percent: 60 }, { grade: 6, percent: 77 },
+        { grade: 7, percent: 89 }, { grade: 8, percent: 96 }, { grade: 9, percent: 100 }
     ];
+
+    window.onload = function() { renderDefaultTable(); };
+
+    function renderDefaultTable() {
+        const tbody = document.getElementById('gradeTableBody');
+        tbody.innerHTML = "";
+        let prevPercent = 0;
+        GRADE_STANDARDS.forEach(item => {
+            const row = document.createElement('tr');
+            row.innerHTML = `<td><span class="grade-badge">${item.grade}</span></td><td>${item.percent - prevPercent}%</td><td>상위 ${item.percent}%</td>`;
+            tbody.appendChild(row);
+            prevPercent = item.percent;
+        });
+    }
 
     function calculateAll() {
         const rank = parseFloat(document.getElementById('rank').value);
         const total = parseFloat(document.getElementById('total').value);
-        const resultDiv = document.getElementById('result');
+        const resultBox = document.getElementById('result-box');
 
         if (!total || total <= 0) {
             alert("전체 인원을 올바르게 입력해주세요.");
@@ -214,41 +304,45 @@
 
         let myGrade = 9;
         let cutoffs = [];
-        GRADE_CUTS.forEach(cut => {
-            const cutoffRank = Math.round(total * (cut.percent / 100));
-            cutoffs.push({ grade: cut.grade, cutoffRank: cutoffRank, percent: cut.percent });
+        
+        GRADE_STANDARDS.forEach(std => {
+            const cutoffRank = Math.round(total * (std.percent / 100));
+            cutoffs.push({ grade: std.grade, cutoffRank: cutoffRank, percent: std.percent });
         });
 
         if (rank && rank > 0) {
-            if (rank > total) {
-                alert("등수가 전체 인원보다 클 수 없습니다.");
-                return;
-            }
+            if (rank > total) { alert("등수가 전체 인원보다 클 수 없습니다."); return; }
             for (let i = 0; i < cutoffs.length; i++) {
-                if (rank <= cutoffs[i].cutoffRank) {
-                    myGrade = cutoffs[i].grade;
-                    break;
-                }
+                if (rank <= cutoffs[i].cutoffRank) { myGrade = cutoffs[i].grade; break; }
             }
             const percentage = (rank / total) * 100;
-            document.getElementById('percent').innerText = percentage.toFixed(2);
-            document.getElementById('myGrade').innerText = myGrade;
-            resultDiv.style.display = 'block';
+            document.getElementById('percent-val').innerText = percentage.toFixed(2);
+            document.getElementById('grade-val').innerText = myGrade;
+            resultBox.style.display = 'block';
+        } else {
+            resultBox.style.display = 'none';
+            myGrade = 0;
         }
-        updateGradeTable(total, myGrade, cutoffs);
+        updateResultTable(cutoffs, myGrade);
     }
 
-    function updateGradeTable(total, myGrade, cutoffs) {
+    function updateResultTable(cutoffs, myGrade) {
         const tbody = document.getElementById('gradeTableBody');
+        const theadRow = document.getElementById('table-header');
+        const title = document.getElementById('table-title');
+        
+        title.innerText = "등급별 커트라인 (예상)";
+        theadRow.innerHTML = `<th>등급</th><th>누적 인원</th><th>등수 범위</th>`;
         tbody.innerHTML = "";
         let prevRank = 0;
+
         cutoffs.forEach(cut => {
             const startRank = prevRank + 1;
             const endRank = cut.cutoffRank;
-            let rankText = (startRank > endRank) ? "해당 인원 없음" : `${startRank}등 ~ ${endRank}등`;
+            let rankText = (startRank > endRank) ? "-" : `${startRank}~${endRank}등`;
             const row = document.createElement('tr');
             if (myGrade === cut.grade) row.classList.add('highlight-row');
-            row.innerHTML = `<td>${cut.grade}등급</td><td>${endRank}명 (누적)</td><td>${rankText}</td>`;
+            row.innerHTML = `<td><span class="grade-badge">${cut.grade}</span></td><td>${endRank}명</td><td>${rankText}</td>`;
             tbody.appendChild(row);
             prevRank = endRank;
         });
